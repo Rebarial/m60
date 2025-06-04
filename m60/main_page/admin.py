@@ -1,73 +1,77 @@
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin
 from .models import *
+from nested_admin import NestedStackedInline, NestedModelAdmin, NestedTabularInline
 
-class StatisticInline(admin.TabularInline):
+admin.site.register(Video)
+admin.site.register(Order)
+
+class StatisticInline(NestedStackedInline):
     model = Statistic
     extra = 0
     verbose_name_plural = "Статистические данные"
 
-class ServiceSubtitle1Inline(admin.TabularInline):
+class ServiceSubtitle1Inline(NestedTabularInline):
     model = ServiceSubtitle1
     extra = 0
     verbose_name_plural = "Пункты под подзаголовком услуг 1"
 
-class ServiceSubtitle2Inline(admin.TabularInline):
+class ServiceSubtitle2Inline(NestedTabularInline):
     model = ServiceSubtitle2
     extra = 0
     verbose_name_plural = "Пункты под подзаголовком услуг 2"
 
-class IncludedServiceInline(admin.TabularInline):
+class IncludedServiceInline(NestedTabularInline):
     model = IncludedService
     extra = 0
     verbose_name_plural = "Включенные услуги"
 
-class ServiceInline(admin.StackedInline):
+class ServiceInline(NestedStackedInline):
     model = Service
     extra = 0
     show_change_link = True
     inlines = [ServiceSubtitle1Inline, ServiceSubtitle2Inline, IncludedServiceInline]
     verbose_name_plural = "Основные услуги"
 
-class AdditionalServicesInline(admin.TabularInline):
+class AdditionalServicesInline(NestedStackedInline):
     model = AdditionalServices
     extra = 0
     verbose_name_plural = "Дополнительные услуги"
 
-class AdvantageInline(admin.TabularInline):
+class AdvantageInline(NestedStackedInline):
     model = Advantage
     extra = 0
     verbose_name_plural = "Преимущества"
 
-class InstructorsInline(admin.TabularInline):
+class InstructorsInline(NestedStackedInline):
     model = Instructors
     extra = 0
     verbose_name_plural = "Инструкторы"
 
-class StagesInline(admin.TabularInline):
+class StagesInline(NestedStackedInline):
     model = Stages
     extra = 0
     verbose_name_plural = "Этапы обучения"
 
-class ReviewsInline(admin.TabularInline):
+class ReviewsInline(NestedStackedInline):
     model = Reviews
     extra = 0
     verbose_name_plural = "Отзывы"
 
-class ReviewsVideoInline(admin.TabularInline):
+class ReviewsVideoInline(NestedStackedInline):
     model = ReviewsVideo
     extra = 0
     verbose_name_plural = "Видео отзывы"
 
-class FAQInline(admin.TabularInline):
+class FAQInline(NestedStackedInline):
     model = FAQ
     extra = 0
     verbose_name_plural = "Часто задаваемые вопросы"
 
 @admin.register(PageInfo)
-class PageInfoAdmin(ModelAdmin):
+class PageInfoAdmin(NestedModelAdmin):
     inlines = [
-        StatisticInline,  # Включаем сюда нужный нам inline-класс
+        StatisticInline,
         ServiceInline,
         AdditionalServicesInline,
         AdvantageInline,
@@ -101,9 +105,7 @@ class PageInfoAdmin(ModelAdmin):
         ('Заголовки разделов', {
             'fields': (
                 'services_title',
-                'services_subtitle',
                 'additional_services_title',
-                'additional_services_subtitle',
                 'advantage_title',
                 'advantage_subtitle',
                 'about_us_title',
@@ -111,14 +113,13 @@ class PageInfoAdmin(ModelAdmin):
                 'about_us_description',
                 'about_us_button',
                 'instructor_title',
-                'instructor_subtitle',
                 'stage_title',
-                'stage_subtitle',
                 'reviews_title',
                 'reviews_subtitle',
                 'reviews_google_rating',
                 'reviews_yandex_rating',
                 'reviews_2gis_rating',
+                'reviews_video_title',
                 'start_education_title',
                 'start_education_description',
                 'start_education_image',

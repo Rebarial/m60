@@ -1,4 +1,6 @@
 from .main_page import *
+from .order import Order
+from .video import Video
 
 __all__ = [
     'PageInfo',
@@ -14,4 +16,8 @@ __all__ = [
     'Reviews',
     'ReviewsVideo',
     'FAQ',
+
+    'Video',
+
+    'Order',
 ]

@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  celery:
+    build: .
+    command: celery -A m60 worker --loglevel=info
+    volumes:
+      - .:/code
+    depends_on:
+      - redis
+      - web
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  telegram_bot:
+    build: .
+    command: python manage.py runbot
+    volumes:
+      - .:/code
+    depends_on:
+      - redis
+      - web
+    environment:
+      - PYTHONUNBUFFERED=1
+
+volumes:
+  redis_data:

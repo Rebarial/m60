@@ -1,19 +1,12 @@
-from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
-from .models import ReviewsVideo
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Video
 
-def get_video_data(request, video_id):
+@api_view(['GET'])
+def get_video_url(request, video_id):
     try:
-        video = get_object_or_404(ReviewsVideo, pk=video_id)
-        
-        response_data = {
-            'status': 'success',
-            'video': video.video_url,
-        }
-        return JsonResponse(response_data)
-    
-    except Exception as e:
-        return JsonResponse({
-            'status': 'error',
-            'message': str(e)
-        }, status=404)
+        video = Video.objects.get(pk=video_id)
+        return Response({'url': video.url}, status=status.HTTP_200_OK)
+    except Video.DoesNotExist:
+        return Response({'error': 'Video not found'}, status=status.HTTP_404_NOT_FOUND)

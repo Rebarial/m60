@@ -44,12 +44,15 @@ class PageInfo(BaseModel):
         verbose_name_plural = "Информация главной страницы"
 
     #Контакты
-    telephone = models.CharField(max_length=13, verbose_name="Телефон компании")
+    telephone = models.CharField(max_length=12, verbose_name="Телефон компании")
     watsapp_link = models.URLField(verbose_name="Ссылка на WhatsApp", blank=True, null=True)
     telegram_link = models.URLField(verbose_name="Ссылка на Telegram", blank=True, null=True)
+    twogis_link = models.URLField(verbose_name="Ссылка на 2GIS", blank=True, null=True)
+    yandex_link = models.URLField(verbose_name="Ссылка на Yandex", blank=True, null=True)
+    google_link = models.URLField(verbose_name="Ссылка на Google", blank=True, null=True)
 
     address = models.TextField(verbose_name="Адрес компании")
-    hotline_telephone = models.CharField(max_length=13, verbose_name="Горячая линия")
+    hotline_telephone = models.CharField(max_length=12, verbose_name="Горячая линия")
 
     #Данные первой страницы
     title = models.CharField(max_length=100, verbose_name="Заголовок")
@@ -65,11 +68,9 @@ class PageInfo(BaseModel):
 
     #Данные услуг
     services_title = models.CharField(max_length=100, verbose_name="Заголовок услуг")
-    services_subtitle = models.CharField(max_length=100, verbose_name="Подзаголовок услуг")
 
     #Данные доп услуг
     additional_services_title = models.CharField(max_length=100, verbose_name="Заголовок доп услуг")
-    additional_services_subtitle = models.CharField(max_length=100, verbose_name="Подзаголовок доп услуг")
 
     #Данные преимущества
     advantage_title = models.CharField(max_length=100, verbose_name="Заголовок преимущество")
@@ -79,15 +80,13 @@ class PageInfo(BaseModel):
     about_us_title = models.CharField(max_length=100, verbose_name="Заголовок о нас")
     about_us_subtitle = models.CharField(max_length=100, verbose_name="Подзаголовок о нас")
     about_us_description = models.TextField(verbose_name="Описание о нас")
-    about_us_button = models.TextField(verbose_name="Текст кнопки о нас")
+    about_us_button = models.CharField(max_length=100, verbose_name="Текст кнопки о нас")
 
     #Инструкторы
-    instructor_title = models.CharField(max_length=100, verbose_name="Заголовок о нас")
-    instructor_subtitle = models.CharField(max_length=100, verbose_name="Подзаголовок о нас")
-
+    instructor_title = models.CharField(max_length=100, verbose_name="Заголовок инструкторы")
+    
     #Этапы
     stage_title = models.CharField(max_length=100, verbose_name="Заголовок этапы")
-    stage_subtitle = models.CharField(max_length=100, verbose_name="Подзаголовок этапы")
 
     #Отзывы
     reviews_title = models.CharField(max_length=100, verbose_name="Заголовок отзывы")
@@ -95,6 +94,9 @@ class PageInfo(BaseModel):
     reviews_google_rating = models.DecimalField(max_digits=2, decimal_places=1, verbose_name="Оценка Google")
     reviews_yandex_rating = models.DecimalField(max_digits=2, decimal_places=1, verbose_name="Оценка Yandex")
     reviews_2gis_rating = models.DecimalField(max_digits=2, decimal_places=1, verbose_name="Оценка 2GIS")
+
+    #Видео от учеников
+    reviews_video_title = models.CharField(max_length=100, verbose_name="Заголовок отзывы видео")
 
     #Начало обучения заявка
     start_education_title = models.CharField(max_length=100, verbose_name="Заголовок начать обучение")
@@ -132,8 +134,8 @@ class Service(BaseModel):
     installment_button = models.CharField(max_length=100, verbose_name="Текст кнопки рассрочки")
 
     class Meta:
-        verbose_name = "Курс для начинающих водителей"
-        verbose_name_plural = "Курсы для начинающих водителей"
+        verbose_name = "Услуга"
+        verbose_name_plural = "Услуги"
 
     def __str__(self):
         return self.title
@@ -188,6 +190,10 @@ class AdditionalServices(BaseModel):
 
     button = models.CharField(max_length=100,verbose_name="Текст кнопки")
 
+    class Meta:
+        verbose_name = "Доп услуга"
+        verbose_name_plural = "Доп услуги"
+
 class Advantage(BaseModel):
     page = models.ForeignKey(PageInfo, on_delete=models.CASCADE, related_name="advantage_items")
 
@@ -195,7 +201,7 @@ class Advantage(BaseModel):
         ('small', 'Небольшая информация'),
         ('big', 'Большая информация'),
         ('image', 'Картинка'),
-        ('video', 'Приведи друга'),
+        ('video', 'Видео'),
     ]
 
     advantage_type = models.CharField(
@@ -208,10 +214,14 @@ class Advantage(BaseModel):
     subtitle = models.CharField(blank=True, null=True, max_length=100, verbose_name="Подзаголовок")
     description = models.TextField(blank=True, null=True, verbose_name="Описание")
     image = WebPField(blank=True, null=True, upload_to='advantages/',  verbose_name="Изображение")
-    video_url = models.URLField(blank=True, null=True, verbose_name="Ссылка на видео")
+    video = models.ForeignKey("Video", on_delete=models.SET_NULL, blank=True, null=True, verbose_name="Видео")
 
     button_text = models.CharField(blank=True, null=True, max_length=100, verbose_name="Текст левой кнопки")
     detailed_button_text = models.CharField(blank=True, null=True, max_length=100, verbose_name="Текст правой кнопки")
+
+    class Meta:
+        verbose_name = "Преимущество"
+        verbose_name_plural = "Преимущества"
 
 class Instructors(BaseModel):
     page = models.ForeignKey(PageInfo, on_delete=models.CASCADE, related_name="instructors_items")
@@ -224,11 +234,19 @@ class Instructors(BaseModel):
 
     experience = models.CharField(max_length=100,verbose_name="Стаж")
 
+    class Meta:
+        verbose_name = "Инструктор"
+        verbose_name_plural = "Инструктора"
+
 class Stages(BaseModel):
     page = models.ForeignKey(PageInfo, on_delete=models.CASCADE, related_name="stages_items")
 
     title = models.CharField(max_length=100, verbose_name="Заголовок")
     description = models.TextField(blank=True, null=True, verbose_name="Описание")
+
+    class Meta:
+        verbose_name = "Этап"
+        verbose_name_plural = "Этапы"
 
 class Reviews(BaseModel):
     page = models.ForeignKey(PageInfo, on_delete=models.CASCADE, related_name="reviews_items")
@@ -250,13 +268,26 @@ class Reviews(BaseModel):
         choices=TYPE_CHOICES,
         verbose_name="Место отзыва"
     )
+    class Meta:
+        verbose_name = "Отзыв"
+        verbose_name_plural = "Отзывы"
 
 class ReviewsVideo(BaseModel):
     page = models.ForeignKey(PageInfo, on_delete=models.CASCADE, related_name="reviews_video_items")
-    video_url = models.URLField(blank=True, null=True, verbose_name="Ссылка на видео")
+    video = models.ForeignKey("Video", on_delete=models.SET_NULL, blank=True, null=True, verbose_name="Видео")
+
+    class Meta:
+        verbose_name = "Отзыв видео"
+        verbose_name_plural = "Отзывы видео"
 
 class FAQ(BaseModel):
     page = models.ForeignKey(PageInfo, on_delete=models.CASCADE, related_name="faq_items")
 
     title = models.CharField(max_length=100, verbose_name="Заголовок")
     description = models.TextField(blank=True, null=True, verbose_name="Описание")
+
+    class Meta:
+        verbose_name = "Ответ на вопрос"
+        verbose_name_plural = "Ответы на вопросы"
+
+

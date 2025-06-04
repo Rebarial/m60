@@ -1,0 +1,3 @@
+celery -A m60 worker --pool=solo --loglevel=info
+python manage.py runserver
+python manage.py runbot
