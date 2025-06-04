@@ -6,8 +6,11 @@ from celery import shared_task
 import os
 import asyncio
 from telegram_bot.models import TelegramSubscriber
+from dotenv import load_dotenv
 
-TELEGRAM_TOKEN = "7845389882:AAG8q8GpopBwXv2mxu4b7WAbL8ypqwvN_J8"
+load_dotenv()
+
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_BOT_API_KEY")
 
 bot = Bot(token=TELEGRAM_TOKEN)
 
