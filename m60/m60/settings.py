@@ -29,6 +29,8 @@ INSTALLED_APPS = [
     'django_extensions',
     'nested_admin',
 
+    'drf_yasg',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

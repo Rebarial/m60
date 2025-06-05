@@ -5,6 +5,7 @@ from .models import Video
 
 @api_view(['GET'])
 def get_video_url(request, video_id):
+    """Апи для получаения видео по id"""
     try:
         video = Video.objects.get(pk=video_id)
         return Response({'url': video.url}, status=status.HTTP_200_OK)
