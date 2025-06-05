@@ -6,9 +6,16 @@ import sys
 from PIL import Image
 
 class WebPField(models.ImageField):
+    """Класс для сохранения картинок в формате .webp"""
     def pre_save(self, model_instance, add):
+        """Перед сохранением имзеняет формат картинки на .webp"""
         file = super().pre_save(model_instance, add)
+        return self.to_webp(file)
+    
+    def to_webp(self,file):
+        """Изменяет формат файла на webp"""
         if file and not file.name.lower().endswith('.webp'):
+
             img = Image.open(file)
 
             if img.mode in ('RGBA', 'LA'):
@@ -35,7 +42,7 @@ class WebPField(models.ImageField):
                 ),
                 save=False
             )
-        return file
+            return file
     
 class PageInfo(BaseModel):    
 
